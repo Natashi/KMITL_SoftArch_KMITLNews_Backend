@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace KMITLNews_Backend.Models.User
+namespace KMITLNews_Backend.Models
 {
     public class UserRegister
     {

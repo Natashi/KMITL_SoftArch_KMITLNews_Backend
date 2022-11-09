@@ -1,9 +1,9 @@
-﻿using KMITLNews_Backend.Models.User;
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
+
+using KMITLNews_Backend.Models;
 
 namespace UserAPI.Controllers
 {

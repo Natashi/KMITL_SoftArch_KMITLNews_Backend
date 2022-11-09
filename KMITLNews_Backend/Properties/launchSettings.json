@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "KMITLNews_Backend": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:55742;http://localhost:55743"
+    }
+  }
+}

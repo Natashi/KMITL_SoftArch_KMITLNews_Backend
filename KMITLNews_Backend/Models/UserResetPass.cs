@@ -1,4 +1,4 @@
-﻿namespace KMITLNews_Backend.Models.User
+﻿namespace KMITLNews_Backend.Models
 {
     public class UserResetPass
     {
