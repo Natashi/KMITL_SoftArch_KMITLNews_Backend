@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UserAPI.Models
+namespace KMITLNews_Backend.Models.User
 {
     public class UserLogin
     {

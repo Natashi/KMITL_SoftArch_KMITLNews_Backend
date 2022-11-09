@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using UserAPI.Data;
+using KMITLNews_Backend.Models.User;
 
 #nullable disable
 
 namespace UserAPI.Migrations
 {
-    [DbContext(typeof(Database))]
+    [DbContext(typeof(DataContext))]
     [Migration("20221101152510_Initial")]
     partial class Initial
     {
