@@ -49,6 +49,8 @@ namespace PostAPI.Controllers
          post_id = Post_U.post_id,
         
       };
+      _context.Posts_Users.Add(P_User);
+			await _context.SaveChangesAsync(); 
 			
 			return Ok("success");
    
