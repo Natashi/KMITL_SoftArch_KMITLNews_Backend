@@ -75,11 +75,14 @@ namespace PostAPI.Controllers
         var Post_id_Post = await _context.Posts.FindAsync(request.post_id);
         var Post_id_PU = await _context.Posts_Users.FindAsync(request.post_id);
         var Post_id_TP = await _context.Tags_Posts.FindAsync(request.post_id);
+        var Post_id_Share = await _context.Users_SharedPosts.FindAsync(request.post_id);
         if(Post_id_Post==null && Post_id_PU.post_id == id &&Post_id_PU.post_id != null ) return BadRequest("not found");
     
         _context.Posts.Remove(Post_id_Post);
         _context.Posts_Users.Remove(Post_id_PU);
         _context.Tags_Posts.Remove(Post_id_TP);
+        _context.Users_SharedPosts.Remove(Post_id_Share);
+        
 
         await _context.SaveChangesAsync();
         return Ok("Post Delete success");
@@ -106,6 +109,13 @@ namespace PostAPI.Controllers
        public async Task<ActionResult> GetAllPostc(){
      //   
       return Ok(await _context.Posts.Where(u=>u.verified== true).ToListAsync());
+
+    }
+
+        [HttpGet("GetAllPostbyUser/{id}")]
+       public async Task<ActionResult> GetAllPostbyUser(int id){
+     //   
+      return Ok(await _context.Posts_Users.Where(u=>u.user_id==id).ToListAsync());
 
     }
 
