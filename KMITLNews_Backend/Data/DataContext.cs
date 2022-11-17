@@ -2,6 +2,7 @@
 
 using KMITLNews_Backend.Models;
 using Microsoft.Extensions.Hosting;
+using System.Linq.Expressions;
 
 namespace KMITLNews_Backend.Data
 {
@@ -22,5 +23,20 @@ namespace KMITLNews_Backend.Data
 		public DbSet<Users_Follows> Users_Follows { get; set; }
 		public DbSet<Tags_Posts> Tags_Posts { get; set; }
 		public DbSet<Tags_Follows> Tags_Follows { get; set; }
+
+		//Extra methods
+
+		public static IQueryable<T> RemoveFrom<T>(DbSet<T> dest, Expression<Func<T, bool>> predicate) where T : class {
+			if (dest == null)
+				throw new ArgumentNullException(nameof(dest));
+			if (predicate == null)
+				throw new ArgumentNullException(nameof(predicate));
+
+			var arr = dest.Where(predicate);
+			foreach (var i in arr)
+				dest.Remove(i);
+
+			return arr;
+		}
 	}
 }
