@@ -43,6 +43,7 @@ namespace KMITLNews_Backend.Controllers {
 			Post post = posts[0];
 			post.verified = request.Verification;
 
+			await _context.SaveChangesAsync();
 			return Ok(post);
 		}
 
@@ -58,6 +59,7 @@ namespace KMITLNews_Backend.Controllers {
 			User user = users[0];
 			user.verified = request.Verification;
 
+			await _context.SaveChangesAsync();
 			return Ok(user);
 		}
 
@@ -97,6 +99,7 @@ namespace KMITLNews_Backend.Controllers {
 			//Remove "dead" tags from Tags_Follows
 			//Not doing that for now.
 
+			await _context.SaveChangesAsync();
 			return Ok("Success.");
 		}
 	}
