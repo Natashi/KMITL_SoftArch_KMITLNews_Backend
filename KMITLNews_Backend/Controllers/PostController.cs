@@ -24,8 +24,8 @@ namespace PostAPI.Controllers
 			return await _context.Posts.ToListAsync();
 		}
 
-    [HttpPost("CreatePost/{id}")]
-    public async Task<ActionResult> PostCreate(int id,Post_Create request){
+    [HttpPost("CreatePost")]
+    public async Task<ActionResult> PostCreate(Post_Create request){
         
         	var post = new Post
 			{
@@ -40,6 +40,7 @@ namespace PostAPI.Controllers
 
 			_context.Posts.Add(post);
 			await _context.SaveChangesAsync(); 
+
       var Post_U =await _context.Posts.FirstOrDefaultAsync(u=>u.post_text == request.post_text);
       if (Post_U.post_id==null) return BadRequest("not found Post_id");
       var P_User= new Posts_Users
@@ -111,7 +112,6 @@ namespace PostAPI.Controllers
         _context.Posts_Users.Remove(Post_id_PU);
         _context.Tags_Posts.Remove(Post_id_TP);
         _context.Users_SharedPosts.Remove(Post_id_Share);
-        
 
         await _context.SaveChangesAsync();
         return Ok("Post Delete success");
@@ -120,11 +120,7 @@ namespace PostAPI.Controllers
 
      [HttpGet("GetPostReportCount")]
        public async Task<ActionResult> GetPostReportCount(){
-        
         return Ok(await _context.Posts.Where(u=>u.report_count > 0).ToListAsync());
-
-      
-       
     }
 
     [HttpGet("GetPostTags/{tag}")]
@@ -176,8 +172,5 @@ namespace PostAPI.Controllers
       
 
     }
-
-
-
 }
 }
