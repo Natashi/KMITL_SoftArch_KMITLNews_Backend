@@ -14,7 +14,7 @@ namespace UserAPI.Controllers
 		// ----------------------------------------- Connect DB
 
 		private readonly DataContext _context;
-		//Constructure
+		
 		public UserController(DataContext context)
 		{
 			_context = context;
