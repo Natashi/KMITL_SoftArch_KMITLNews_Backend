@@ -21,6 +21,10 @@ namespace KMITLNews_Backend.Models
         public int report_count { get; set; }
     }
 
+	public enum UserType : int {
+		Normal = 0,
+		Admin,
+	}
 	public enum UserVerificationStatus : int {
 		Unverified = 0,
 		Pending,
