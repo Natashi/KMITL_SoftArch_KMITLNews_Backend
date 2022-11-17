@@ -20,7 +20,7 @@ namespace KMITLNews_Backend.Controllers {
 				return false;
 			return CheckAuthorization(users[0]);
 		}
-		private bool CheckAuthorization(User user) {
+		private static bool CheckAuthorization(User user) {
 			return user.user_type == (int)UserType.Admin;
 		}
 
@@ -58,11 +58,10 @@ namespace KMITLNews_Backend.Controllers {
 			if (postID != request.PostID)
 				return BadRequest("Post IDs do not match.");
 
-			var posts = await _context.Posts.Where(i => i.post_id == postID).ToArrayAsync();
-			if (posts.Length == 0)
+			Post? post = await _context.Posts.FindAsync(postID);
+			if (post == null)
 				return BadRequest(string.Format("Post not found with id={0}", postID));
 
-			Post post = posts[0];
 			post.verified = request.Verification;
 
 			await _context.SaveChangesAsync();
@@ -77,11 +76,10 @@ namespace KMITLNews_Backend.Controllers {
 			if (userID != request.UserID)
 				return BadRequest("User IDs do not match.");
 
-			var users = await _context.Users.Where(i => i.user_id == userID).ToArrayAsync();
-			if (users.Length == 0)
+			User? user = await _context.Users.FindAsync(userID);
+			if (user == null)
 				return BadRequest(string.Format("User not found with id={0}", userID));
 
-			User user = users[0];
 			user.verified = request.Verification;
 
 			await _context.SaveChangesAsync();
@@ -93,11 +91,9 @@ namespace KMITLNews_Backend.Controllers {
 			if (!CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
 
-			var posts = await _context.Posts.Where(i => i.post_id == postID).ToArrayAsync();
-			if (posts.Length == 0)
+			Post? post = await _context.Posts.FindAsync(postID);
+			if (post == null)
 				return BadRequest(string.Format("Post not found with id={0}", postID));
-
-			Post post = posts[0];
 
 			//Remove post from each tables
 			_context.Posts.Remove(post);
@@ -114,12 +110,11 @@ namespace KMITLNews_Backend.Controllers {
 			if (!CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
 
-			var users = await _context.Users.Where(i => i.user_id == userID).ToArrayAsync();
-			if (users.Length == 0)
+			User? user = await _context.Users.FindAsync(userID);
+			if (user == null)
 				return BadRequest(string.Format("User not found with id={0}", userID));
 
 			//Remove user from Users
-			User user = users[0];
 			_context.Users.Remove(user);
 
 			//Remove user from Users_Follows

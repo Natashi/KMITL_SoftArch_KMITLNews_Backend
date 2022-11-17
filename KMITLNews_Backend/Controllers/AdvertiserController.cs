@@ -13,23 +13,23 @@ namespace KMITLNews_Backend.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Advertiser>>> Get()
+        [HttpGet("GetAllAdvertiserData")]
+        public async Task<ActionResult<List<Advertiser>>> GetAllAdvertiserData()
         {
             return Ok(await _context.Advertisers.ToListAsync());
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Advertiser>> Get(int id)
+        [HttpGet("GetAdvertiser/{id}")]
+        public async Task<ActionResult<Advertiser>> GetAdvertiser(int id)
         {
-            var hero = await _context.Advertisers.FindAsync(id);
-            if (hero == null)
+            var advertiser = await _context.Advertisers.FindAsync(id);
+            if (advertiser == null)
                 return BadRequest("advertiser not found.");
-            return Ok(hero);
+            return Ok(advertiser);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<List<Advertiser>>> AddHero(Advertiser_Create request)
+        [HttpPost("RegisterAdvertiser")]
+        public async Task<ActionResult<List<Advertiser>>> RegisterAdvertiser(Advertiser_Create request)
         {
             var ads = new Advertiser
             {
