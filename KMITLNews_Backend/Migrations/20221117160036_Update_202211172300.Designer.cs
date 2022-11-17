@@ -4,6 +4,7 @@ using KMITLNews_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,16 +12,17 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace UserAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DatabaseModelSnapshot : ModelSnapshot
+    [Migration("20221117160036_Update_202211172300")]
+    partial class Update_202211172300
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0")
+                .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("KMITLNews_Backend.Models.Advertiser", b =>
                 {
@@ -28,7 +30,7 @@ namespace UserAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("advertiser_id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("advertiser_id"), 1L, 1);
 
                     b.Property<string>("ad_image_url")
                         .IsRequired()
@@ -49,7 +51,7 @@ namespace UserAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("post_id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("post_id"), 1L, 1);
 
                     b.Property<string>("attached_image_url")
                         .IsRequired()
@@ -114,7 +116,7 @@ namespace UserAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("user_id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("user_id"), 1L, 1);
 
                     b.Property<string>("display_name")
                         .IsRequired()

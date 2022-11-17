@@ -7,6 +7,8 @@ namespace PostAPI.Controllers
 {
     [Route("api/[controller]")] // ตรวจค่าว่าเอาคำที่อยู่หน้า Controller มาเป็นชื่อ Route
 	[ApiController]
+	public class PostController : ControllerBase {
+		private readonly DataContext _context;
 
     public class PostController : ControllerBase{
         private readonly DataContext _context;
@@ -26,7 +28,6 @@ namespace PostAPI.Controllers
 
 
 
-        // --------------- pun
 
         [HttpPost("CreateShare/{id}")]
         public async Task<ActionResult> PostCreate(int id, Post_Share request)
@@ -61,6 +62,14 @@ namespace PostAPI.Controllers
 
         }
 
+		}
+
+
+		[HttpPut("UpdatePost/{id}")]
+		public async Task<ActionResult> Postupdate(int id, Post_Update request) {
+			var Post_id = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == request.post_id);
+			var User_id = await _context.Users.FirstOrDefaultAsync(u => u.user_id == id);
+			if (Post_id == null || User_id == null) return BadRequest("not found");
 
 
         [HttpGet("GetAllPostsSharedByUser/{id}")]
@@ -76,6 +85,7 @@ namespace PostAPI.Controllers
             return Ok(await _context.Tags_Follows.ToListAsync());
         }
 
+		}
 
         [HttpGet("GetFollowingByUser/{id}")]
         public async Task<ActionResult> GetFollowingByUser(int id)

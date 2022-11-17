@@ -4,7 +4,7 @@ namespace KMITLNews_Backend.Models
 {
     public class Post_Update
     {
-        [Required(AllowEmptyStrings=false)]
+        [Required]
         public int post_id { get; set; }
 
         [Required(AllowEmptyStrings=false)]
