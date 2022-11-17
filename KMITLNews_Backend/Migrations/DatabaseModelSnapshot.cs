@@ -17,10 +17,10 @@ namespace UserAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "7.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("KMITLNews_Backend.Models.Advertiser", b =>
                 {
@@ -28,7 +28,7 @@ namespace UserAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("advertiser_id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("advertiser_id"));
 
                     b.Property<string>("ad_image_url")
                         .IsRequired()
@@ -49,7 +49,7 @@ namespace UserAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("post_id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("post_id"));
 
                     b.Property<string>("attached_image_url")
                         .IsRequired()
@@ -113,7 +113,7 @@ namespace UserAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("user_id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("user_id"));
 
                     b.Property<string>("display_name")
                         .IsRequired()
