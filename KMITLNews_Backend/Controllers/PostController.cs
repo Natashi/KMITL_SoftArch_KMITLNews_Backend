@@ -66,27 +66,28 @@ namespace PostAPI.Controllers
         [HttpGet("GetAllPostsSharedByUser/{id}")]
         public async Task<ActionResult> GetAllPostsSharedByUser(int id)
         {
-            return Ok(await _context.Users_SharedPosts.AnyAsync(u => u.user_id == id));
+            return Ok(await _context.Users_SharedPosts.Where(u => u.user_id == id).ToListAsync());
         }
 
 
         [HttpGet("GetAllTags")]
         public async Task<ActionResult<IEnumerable<Tags_Follows>>> GetAllTags()
         {
-            return await _context.Tags_Follows.ToListAsync();
+            return Ok(await _context.Tags_Follows.ToListAsync());
         }
 
 
         [HttpGet("GetFollowingByUser/{id}")]
         public async Task<ActionResult> GetFollowingByUser(int id)
         {
-            return Ok(await _context.Users_Follows.AnyAsync(u => u.user_id == id));
+            return Ok(await _context.Users_Follows.Where(u => u.user_id == id).ToListAsync());
         }
 
         [HttpGet("GetAllPostsByTags/{tags}")]
         public async Task<ActionResult> GetAllPostsByTags(string tags)
         {
-            return Ok(await _context.Tags_Posts.AnyAsync(u => u.tag_name == tags));
+            return Ok(await _context.Tags_Posts.Where(u => u.tag_name == tags).ToListAsync());
+
         }
 
 
