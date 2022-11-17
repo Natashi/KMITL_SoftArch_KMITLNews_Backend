@@ -72,13 +72,40 @@ namespace PostAPI.Controllers
 
     }
 
+      [HttpPut("UpdateReportCountToZero/{id}")]
+       public async Task<ActionResult> UpdateReportCountToZero(int id){
+        var Post_id =await _context.Posts.FirstOrDefaultAsync(u=>u.post_id == id);
+        
+        if(Post_id==null) return BadRequest("not found");
+        
+        Post_id.report_count= 0;
+        
+
+			return Ok("Post Edit success");
+   
+
+    }
+
+      [HttpPut("UpdateReportCount/{id}")]
+       public async Task<ActionResult> UpdateReportCount(int id){
+        var Post_id =await _context.Posts.FirstOrDefaultAsync(u=>u.post_id == id);
+        
+        if(Post_id==null) return BadRequest("not found");
+        
+        Post_id.report_count= Post_id.report_count + 1;
+        
+
+			return Ok("Post Edit success");
+    }
+
+
     [HttpPut("DeletePost/{id}")]
        public async Task<ActionResult> Postdelete(int id,Post_Delete request){
         var Post_id_Post = await _context.Posts.FindAsync(request.post_id);
         var Post_id_PU = await _context.Posts_Users.FindAsync(request.post_id);
         var Post_id_TP = await _context.Tags_Posts.FindAsync(request.post_id);
         var Post_id_Share = await _context.Users_SharedPosts.FindAsync(request.post_id);
-        if(Post_id_Post==null && Post_id_PU.post_id == id &&Post_id_PU.post_id != null ) return BadRequest("not found");
+        if(Post_id_Post==null && Post_id_PU.post_id == id && Post_id_PU.post_id != null ) return BadRequest("not found");
     
         _context.Posts.Remove(Post_id_Post);
         _context.Posts_Users.Remove(Post_id_PU);
@@ -102,8 +129,22 @@ namespace PostAPI.Controllers
 
     [HttpGet("GetPostTags/{tag}")]
        public async Task<ActionResult> GetPostTags(string tag){
+       var targetIDs = await _context.Tags_Follows.Where(u=>u.tag_name == tag).Select(u=>u.post_id).ToListAsync();
+
+    
+       var PostID_tag = _context.Posts.AsEnumerable().Where(
+        u=>{
+          foreach(int Post_id in targetIDs){
+            if(targetIDs.Contains(u.post_id)){
+              return true;
+            }
+          }
+          return false;
+        }
+       ).ToList();
+
      //   
-      return Ok(await _context.Tags_Follows.Where(u=>u.tag_name == tag).ToListAsync());
+      return Ok(PostID_tag);
 
     }
 
@@ -117,7 +158,22 @@ namespace PostAPI.Controllers
         [HttpGet("GetAllPostbyUser/{id}")]
        public async Task<ActionResult> GetAllPostbyUser(int id){
      //   
-      return Ok(await _context.Posts_Users.Where(u=>u.user_id==id).ToListAsync());
+      var targetIDs = await _context.Posts_Users.Where(u=>u.user_id == id).Select(u=>u.post_id).ToListAsync();
+
+    
+       var PostID_ByUsers = _context.Posts.AsEnumerable().Where(
+        u=>{
+          foreach(int id in targetIDs){
+            if(targetIDs.Contains(u.post_id)){
+              return true;
+            }
+          }
+          return false;
+        }
+       ).ToList();
+
+         return Ok(PostID_ByUsers);
+      
 
     }
 
