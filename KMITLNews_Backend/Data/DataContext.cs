@@ -4,6 +4,8 @@ using KMITLNews_Backend.Models;
 using Microsoft.Extensions.Hosting;
 using System.Linq.Expressions;
 
+#pragma warning disable CS8618
+
 namespace KMITLNews_Backend.Data
 {
     public class DataContext : DbContext {
