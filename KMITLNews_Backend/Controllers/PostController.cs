@@ -48,6 +48,8 @@ namespace PostAPI.Controllers {
 			};
 
 			var entityEntry = _context.Posts.Add(post);
+			await _context.SaveChangesAsync();
+
 			Post addedPost = entityEntry.Entity;
 
 			var P_User = new Posts_Users {
@@ -59,7 +61,7 @@ namespace PostAPI.Controllers {
 			AddTags(addedPost.post_id, request.Tags);
 
 			await _context.SaveChangesAsync();
-			return Ok("Success.");
+			return Ok(entityEntry.Entity.post_id);
 		}
 
 		[HttpPut("AddTagsToPost/{postID}")]
