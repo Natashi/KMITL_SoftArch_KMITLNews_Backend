@@ -50,7 +50,7 @@ namespace KMITLNews_Backend.Controllers {
 			return Ok(res);
 		}
 
-		[HttpPut("SetPostVerification/{id}")]
+		[HttpPut("SetPostVerification/{postID}")]
 		public async Task<ActionResult> SetPostVerification(int postID, Request_Admin_SetPostVerification request) {
 			if (!CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
@@ -68,7 +68,7 @@ namespace KMITLNews_Backend.Controllers {
 			return Ok(post);
 		}
 
-		[HttpPut("SetUserVerification/{id}")]
+		[HttpPut("SetUserVerification/{userID}")]
 		public async Task<ActionResult> SetUserVerification(int userID, Request_Admin_SetUserVerification request) {
 			if (!CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
@@ -86,7 +86,7 @@ namespace KMITLNews_Backend.Controllers {
 			return Ok(user);
 		}
 
-		[HttpDelete("RemovePost/{id}")]
+		[HttpDelete("RemovePost/{postID}")]
 		public async Task<ActionResult> RemovePost(int postID, Request_Admin_Basic request) {
 			Post? post = await _context.Posts.FindAsync(postID);
 			if (post == null)
@@ -105,7 +105,7 @@ namespace KMITLNews_Backend.Controllers {
 			return Ok("Success.");
 		}
 
-		[HttpDelete("RemoveUser/{id}")]
+		[HttpDelete("RemoveUser/{userID}")]
 		public async Task<ActionResult> RemoveUser(int userID, Request_Admin_Basic request) {
 			if (!CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
