@@ -84,6 +84,7 @@ namespace PostAPI.Controllers {
 				return BadRequest("Post not found.");
 
 			Post_id.post_text = request.PostText;
+			Post_id.attached_image_url = request.AttachedImageUrl;
 			Post_id.post_date = DateTime.Now;
 
 			return Ok("Success.");
@@ -97,6 +98,7 @@ namespace PostAPI.Controllers {
 
 			Post_id.report_count = 0;
 
+			await _context.SaveChangesAsync();
 			return Ok("Success.");
 		}
 
@@ -108,10 +110,11 @@ namespace PostAPI.Controllers {
 
 			++(Post_id.report_count);
 
+			await _context.SaveChangesAsync();
 			return Ok("Success.");
 		}
 
-		[HttpGet("GetPostReportCount/{id}")]
+		[HttpGet("GetPostReportCount/{postID}")]
 		public async Task<ActionResult> GetPostReportCount(int postID) {
 			var post = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == postID);
 			if (post == null)
@@ -120,7 +123,7 @@ namespace PostAPI.Controllers {
 			return Ok(post.report_count);
 		}
 
-		[HttpGet("GetPostTags/{id}")]
+		[HttpGet("GetPostTags/{postID}")]
 		public async Task<ActionResult> GetPostTags(int postID) {
 			var post = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == postID);
 			if (post == null)
@@ -136,7 +139,7 @@ namespace PostAPI.Controllers {
 			return Ok(await _context.Posts.Where(u => u.verified == true).ToListAsync());
 		}
 
-		[HttpGet("GetAllPostbyUser/{id}")]
+		[HttpGet("GetAllPostbyUser/{userID}")]
 		public async Task<ActionResult> GetAllPostbyUser(int userID) {
 			int[] postIDs = await _context.Posts_Users.Where(i => i.user_id == userID).Select(i => i.post_id).ToArrayAsync();
 			Post[] posts = await _context.Posts.Where(i => postIDs.Contains(i.post_id)).ToArrayAsync();
@@ -151,22 +154,9 @@ namespace PostAPI.Controllers {
 			if (post_check == null || user_check == null)
 				return BadRequest("User or post not found.");
 
-			var chare_post = new Post {
-				post_date = DateTime.Now,
-				post_text = post_check.post_text,
-				attached_image_url = post_check.attached_image_url,
-				verified = false,
-				report_count = 0,
-			};
-
-			_context.Posts.Add(chare_post);
-			await _context.SaveChangesAsync();
-
-			var Share_Post = await _context.Posts.MaxAsync(u => u.post_id);
-			//var Share_Post = await _context.Posts.LastAsync();
 			var state_share = new Users_SharedPosts {
 				user_id = id,
-				shared_post_id = Share_Post
+				shared_post_id = post_check.post_id,
 			};
 			_context.Users_SharedPosts.Add(state_share);
 
