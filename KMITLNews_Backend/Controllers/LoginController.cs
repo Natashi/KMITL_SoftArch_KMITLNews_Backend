@@ -174,7 +174,7 @@ namespace UserAPI.Controllers
 		public async Task<ActionResult> ResetReportCount(int id) {
 			User? user = await _context.Users.FirstOrDefaultAsync(u => u.user_id == id);
 			if (user == null)
-				return BadRequest("Post not found.");
+				return BadRequest("User not found.");
 
 			user.report_count = 0;
 
@@ -186,7 +186,7 @@ namespace UserAPI.Controllers
 		public async Task<ActionResult> AddReportCount(int id) {
 			User? user = await _context.Users.FirstOrDefaultAsync(u => u.user_id == id);
 			if (user == null)
-				return BadRequest("Post not found.");
+				return BadRequest("User not found.");
 
 			++(user.report_count);
 
