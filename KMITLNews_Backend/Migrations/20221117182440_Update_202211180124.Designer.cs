@@ -4,6 +4,7 @@ using KMITLNews_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace UserAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DatabaseModelSnapshot : ModelSnapshot
+    [Migration("20221117182440_Update_202211180124")]
+    partial class Update202211180124
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,39 +78,59 @@ namespace UserAPI.Migrations
 
             modelBuilder.Entity("KMITLNews_Backend.Models.Posts_Users", b =>
                 {
+                    b.Property<int>("DummyPrimary")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DummyPrimary"));
+
                     b.Property<int>("post_id")
                         .HasColumnType("int");
 
                     b.Property<int>("user_id")
                         .HasColumnType("int");
 
-                    b.HasKey("post_id", "user_id");
+                    b.HasKey("DummyPrimary");
 
                     b.ToTable("Posts_Users");
                 });
 
             modelBuilder.Entity("KMITLNews_Backend.Models.Tags_Follows", b =>
                 {
-                    b.Property<string>("tag_name")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("DummyPrimary")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DummyPrimary"));
 
                     b.Property<int>("follower_id")
                         .HasColumnType("int");
 
-                    b.HasKey("tag_name", "follower_id");
+                    b.Property<string>("tag_name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DummyPrimary");
 
                     b.ToTable("Tags_Follows");
                 });
 
             modelBuilder.Entity("KMITLNews_Backend.Models.Tags_Posts", b =>
                 {
-                    b.Property<string>("tag_name")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("DummyPrimary")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DummyPrimary"));
 
                     b.Property<int>("post_id")
                         .HasColumnType("int");
 
-                    b.HasKey("tag_name", "post_id");
+                    b.Property<string>("tag_name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DummyPrimary");
 
                     b.ToTable("Tags_Posts");
                 });
@@ -172,26 +195,38 @@ namespace UserAPI.Migrations
 
             modelBuilder.Entity("KMITLNews_Backend.Models.Users_Follows", b =>
                 {
-                    b.Property<int>("user_id")
+                    b.Property<int>("DummyPrimary")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DummyPrimary"));
 
                     b.Property<int>("follower_id")
                         .HasColumnType("int");
 
-                    b.HasKey("user_id", "follower_id");
+                    b.Property<int>("user_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("DummyPrimary");
 
                     b.ToTable("Users_Follows");
                 });
 
             modelBuilder.Entity("KMITLNews_Backend.Models.Users_SharedPosts", b =>
                 {
-                    b.Property<int>("user_id")
+                    b.Property<int>("DummyPrimary")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DummyPrimary"));
 
                     b.Property<int>("shared_post_id")
                         .HasColumnType("int");
 
-                    b.HasKey("user_id", "shared_post_id");
+                    b.Property<int>("user_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("DummyPrimary");
 
                     b.ToTable("Users_SharedPosts");
                 });
