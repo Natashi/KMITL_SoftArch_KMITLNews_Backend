@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using KMITLNews_Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Azure;
+using System.ComponentModel.DataAnnotations;
+
 
 #pragma warning disable CS1998
 
@@ -22,7 +24,7 @@ namespace PostAPI.Controllers {
 		}
 
 		[HttpPost("CreatePost/{user_id}")]
-		public async Task<ActionResult> CreatePost(int user_id, Post_Create request) {
+		public async Task<ActionResult> CreatePost(int user_id, Request_Post_Create request) {
 			var post = new Post {
 				post_date = DateTime.Now,
 				post_text = request.PostText,
@@ -41,49 +43,52 @@ namespace PostAPI.Controllers {
 				post_id = addedPost.post_id,
 			};
 			_context.Posts_Users.Add(P_User);
-			await _context.SaveChangesAsync();
 
-			return Ok("success");
+			await _context.SaveChangesAsync();
+			return Ok("Success.");
 		}
 
 
 		[HttpPut("UpdatePost/{id}")]
-		public async Task<ActionResult> UpdatePost(int id, Post_Update request) {
+		public async Task<ActionResult> UpdatePost(int id, Request_Post_Update request) {
 			var Post_id = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == request.post_id);
 			var User_id = await _context.Users.FirstOrDefaultAsync(u => u.user_id == id);
-
-			if (Post_id == null || User_id == null) return BadRequest("not found");
+			if (Post_id == null || User_id == null)
+				return BadRequest("Post not found.");
 
 			Post_id.post_text = request.post_text;
 			Post_id.post_date = DateTime.Now;
 
-			return Ok("Post Edit success");
+			return Ok("Success.");
 		}
 
 		[HttpPut("UpdateReportCountToZero/{id}")]
 		public async Task<ActionResult> UpdateReportCountToZero(int id) {
 			var Post_id = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == id);
-			if (Post_id == null) return BadRequest("not found");
+			if (Post_id == null)
+				return BadRequest("Post not found.");
 
 			Post_id.report_count = 0;
 
-			return Ok("Post Edit success");
+			return Ok("Success.");
 		}
 
 		[HttpPut("UpdateReportCount/{id}")]
 		public async Task<ActionResult> UpdateReportCount(int id) {
 			var Post_id = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == id);
-			if (Post_id == null) return BadRequest("not found");
+			if (Post_id == null)
+				return BadRequest("Post not found.");
 
 			++(Post_id.report_count);
 
-			return Ok("Post Edit success");
+			return Ok("Success.");
 		}
 
 		[HttpGet("GetPostReportCount/{id}")]
 		public async Task<ActionResult> GetPostReportCount(int postID) {
 			var post = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == postID);
-			if (post == null) return BadRequest("not found");
+			if (post == null)
+				return BadRequest("Post not found.");
 
 			return Ok(post.report_count);
 		}
@@ -91,7 +96,8 @@ namespace PostAPI.Controllers {
 		[HttpGet("GetPostTags/{id}")]
 		public async Task<ActionResult> GetPostTags(int postID) {
 			var post = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == postID);
-			if (post == null) return BadRequest("not found");
+			if (post == null)
+				return BadRequest("Post not found.");
 
 			string[] tags = await _context.Tags_Posts.Where(i => i.post_id == postID).Select(i => i.tag_name).ToArrayAsync();
 
@@ -112,10 +118,11 @@ namespace PostAPI.Controllers {
 		}
 
 		[HttpPost("CreateShare/{id}")]
-		public async Task<ActionResult> CreateShare(int id, Post_Share request) {
+		public async Task<ActionResult> CreateShare(int id, Request_Post_Share request) {
 			var post_check = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == request.post_id);
 			var user_check = await _context.Users.FirstOrDefaultAsync(u => u.user_id == id);
-			if (post_check == null || user_check == null) return BadRequest("Don't found DATA");
+			if (post_check == null || user_check == null)
+				return BadRequest("User or post not found.");
 
 			var chare_post = new Post {
 				post_date = DateTime.Now,
@@ -133,11 +140,11 @@ namespace PostAPI.Controllers {
 			var state_share = new Users_SharedPosts {
 				user_id = id,
 				shared_post_id = Share_Post
-
 			};
 			_context.Users_SharedPosts.Add(state_share);
+
 			await _context.SaveChangesAsync();
-			return Ok("success");
+			return Ok("Success.");
 
 		}
 
@@ -165,5 +172,29 @@ namespace PostAPI.Controllers {
 
 			return Ok(posts);
 		}
+	}
+
+	public class Request_Post_Create {
+		[Required]
+		public string PostText { get; set; } = string.Empty;
+		[Required]
+		public string AttachedImgUrl { get; set; } = string.Empty;
+	}
+	public class Request_Post_Update {
+		[Required]
+		public int post_id { get; set; }
+
+		[Required(AllowEmptyStrings = false)]
+		public string post_text { get; set; } = string.Empty;
+		[Required]
+		public string attached_image_url { get; set; } = string.Empty;
+	}
+	public class Request_Post_Share {
+		[Required]
+		public int post_id { get; set; }
+	}
+	public class Request_Post_AddTagsToPost {
+		[Required]
+		public string[]? Tags { get; set; }		//List of tags to add
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace KMITLNews_Backend.Controllers
 {
@@ -24,12 +25,12 @@ namespace KMITLNews_Backend.Controllers
         {
             var advertiser = await _context.Advertisers.FindAsync(id);
             if (advertiser == null)
-                return BadRequest("advertiser not found.");
+                return BadRequest("Advertiser not found.");
             return Ok(advertiser);
         }
 
         [HttpPost("RegisterAdvertiser")]
-        public async Task<ActionResult<List<Advertiser>>> RegisterAdvertiser(Advertiser_Create request)
+        public async Task<ActionResult<List<Advertiser>>> RegisterAdvertiser(Request_Advertiser_Create request)
         {
             var ads = new Advertiser
             {
@@ -42,7 +43,13 @@ namespace KMITLNews_Backend.Controllers
 
             return Ok(await _context.Advertisers.ToListAsync());
         }
-
     }
+
+	public class Request_Advertiser_Create {
+		[Required]
+		public string advertiser_name { get; set; } = string.Empty;
+		[Required]
+		public string ad_image_url { get; set; } = string.Empty;
+	}
 }
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 
 using KMITLNews_Backend.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace UserAPI.Controllers
 {
@@ -41,7 +42,7 @@ namespace UserAPI.Controllers
 		// ----------------------------------------- Register User
 
 		[HttpPost("register")]
-		public async Task<ActionResult> RegisterUser(UserRegister request)
+		public async Task<ActionResult> RegisterUser(Request_User_Register request)
 		{
 
 			// check exist email
@@ -63,7 +64,6 @@ namespace UserAPI.Controllers
 				first_name = request.first_name,
 				last_name = request.last_name,
 				verificationToken = CreateRandomToken()
-
 			};
 
 			_context.Users.Add(user);
@@ -91,16 +91,16 @@ namespace UserAPI.Controllers
 		// ----------------------------------------- Login User
 
 		[HttpPost("Login")]
-		public async Task<ActionResult> LoginUser(UserLogin request)
+		public async Task<ActionResult> LoginUser(Request_User_Login request)
 		{
-
 			var user = await _context.Users.FirstOrDefaultAsync(x => x.email == request.email);
 
-			if (user == null) return BadRequest("User not found!");
+			if (user == null) return BadRequest("User not found.");
 
-			if(!VerifypassHash(request.password,user.pass_hash,user.pass_salt)) return BadRequest("Incorrect password.");
+			if(!VerifypassHash(request.password,user.pass_hash,user.pass_salt))
+				return BadRequest("Incorrect password.");
 
-			return Ok($"user_id : {user.user_id}  ,  Email : {user.email}"); 
+			return Ok($"{user.user_id}, {user.email}");
 		}
 
 		// confirm password
@@ -117,15 +117,13 @@ namespace UserAPI.Controllers
 		// ----------------------------------------- Edit Profile
 
 		[HttpPut("Edit/{id}")]
-		public async Task<ActionResult> EditUser(int id,UserEdit request)
+		public async Task<ActionResult> EditUser(int id, Request_User_Edit request)
 		{
 			var user_find = await _context.Users.FirstOrDefaultAsync(u => u.user_id == id);
 
 			// check exist id
 			if (user_find == null )
-			{
-				return BadRequest("Id user dont found");
-			}
+				return BadRequest("User not found.");
 
 			// update data User
 			//user_find.first_name = request.first_name;
@@ -134,8 +132,7 @@ namespace UserAPI.Controllers
 			user_find.display_name = request.display_name;
 
 			await _context.SaveChangesAsync();  // รอให้ save การเปลี่ยนแปลงข้อมูลลง DB
-
-			return Ok("User info edited.");
+			return Ok("Success.");
 		}
 
 		// ----------------------------------------- reset password
@@ -146,22 +143,21 @@ namespace UserAPI.Controllers
 		{
 			// หา email นั้น
 			var user = await _context.Users.FirstOrDefaultAsync(x => x.email == email);
-			if (user == null) return BadRequest("User not found.");
+			if (user == null)
+				return BadRequest("Email not found.");
 
 			return Ok(user.verificationToken);
 		}
 
 
 		[HttpPut("ResetPass/{token}")]
-		public async Task<ActionResult> ResetPassUser(string token, UserResetPass request)
+		public async Task<ActionResult> ResetPassUser(string token, Request_User_ResetPass request)
 		{
 			var verify_token_User = await _context.Users.FirstOrDefaultAsync(u => u.verificationToken == token);
 
 			// check exist id
 			if (verify_token_User == null)
-			{
 				return BadRequest("Invalid token.");
-			}
 
 			// สร้าง hast salt รหัส
 			CreatePassHash(request.password, out byte[] pass_hash, out byte[] pass_salt);
@@ -171,9 +167,40 @@ namespace UserAPI.Controllers
 			verify_token_User.verificationToken = CreateRandomToken();
 
 			await _context.SaveChangesAsync();  // รอให้ save การเปลี่ยนแปลงข้อมูลลง DB
-
-
-			return Ok("Password reset successfully.");
+			return Ok("Success.");
 		}
+	}
+
+	public class Request_User_Register {
+		[Required, EmailAddress]
+		public string email { get; set; } = string.Empty;
+		[Required, MinLength(5, ErrorMessage = "Password must be at least 5 characters")]
+		public string password { get; set; } = string.Empty;
+		[Required, Compare("password")]
+		public string confirmPassword { get; set; } = string.Empty;
+		[Required, Phone]
+		public string mobile_no { get; set; } = string.Empty;
+		[Required]
+		public string first_name { get; set; } = string.Empty;
+		[Required]
+		public string last_name { get; set; } = string.Empty;
+		//public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+	}
+	public class Request_User_Login {
+		[Required, EmailAddress]
+		public string email { get; set; } = string.Empty;
+		[Required]
+		public string password { get; set; } = string.Empty;
+	}
+	public class Request_User_Edit {
+		//public string first_name { get; set; } = string.Empty;
+		//public string last_name { get; set; } = string.Empty;
+		public string profile_pic_url { get; set; } = string.Empty;
+		public string display_name { get; set; } = string.Empty;
+	}
+	public class Request_User_ResetPass {
+		//public string verificationToken { get; set; } = string.Empty;
+		public string password { get; set; } = string.Empty;
+
 	}
 }
