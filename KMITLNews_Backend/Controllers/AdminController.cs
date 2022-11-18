@@ -25,24 +25,24 @@ namespace KMITLNews_Backend.Controllers {
 		}
 
 		[HttpGet("GetAllUnverifiedPosts")]
-		public async Task<ActionResult<IEnumerable<Post>>> GetAllUnverifiedPosts(Request_Admin_Basic request) {
+		public async Task<ActionResult<IEnumerable<Post>>> GetAllUnverifiedPosts([FromQuery] Request_Admin_Basic request) {
 			if (!CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
 
-			var res = await _context.Posts.Select(i => !i.verified).ToListAsync();
+			var res = await _context.Posts.Where(i => !i.verified).ToListAsync();
 			return Ok(res);
 		}
 		[HttpGet("GetAllReportedPosts")]
-		public async Task<ActionResult<IEnumerable<Post>>> GetAllReportedPosts(Request_Admin_Basic request) {
+		public async Task<ActionResult<IEnumerable<Post>>> GetAllReportedPosts([FromQuery] Request_Admin_Basic request) {
 			if (!CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
 
-			var res = await _context.Users.Select(i => i.report_count > 0).ToListAsync();
+			var res = await _context.Users.Where(i => i.report_count > 0).ToListAsync();
 			return Ok(res);
 		}
 
 		[HttpGet("GetVerificationPendingUsers")]
-		public async Task<ActionResult<IEnumerable<User>>> GetVerificationPendingUsers(Request_Admin_Basic request) {
+		public async Task<ActionResult<IEnumerable<User>>> GetVerificationPendingUsers([FromQuery] Request_Admin_Basic request) {
 			if (!CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
 
@@ -92,7 +92,10 @@ namespace KMITLNews_Backend.Controllers {
 			if (post == null)
 				return BadRequest(string.Format("Post not found with id={0}", postID));
 
-			if (postID != post.post_id && !CheckAuthorization(request.RequesterUserID))
+			var _posterID = await _context.Posts_Users.Where(u => u.post_id == postID).ToArrayAsync();
+			int posterID = _posterID.Length > 0 ? _posterID[0].user_id : -1;
+
+			if (request.RequesterUserID != posterID && !CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
 
 			//Remove post from each tables

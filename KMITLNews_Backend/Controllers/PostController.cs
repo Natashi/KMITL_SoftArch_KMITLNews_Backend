@@ -183,8 +183,12 @@ namespace PostAPI.Controllers {
 			if (user == null)
 				return BadRequest("User not found.");
 
+			User? userToFollow = await _context.Users.FindAsync(request.UserToFollow);
+			if (userToFollow == null)
+				return BadRequest("UserToFollow not found.");
+
 			var follow = new Users_Follows {
-				user_id = request.UserToFollow,
+				user_id = userToFollow.user_id,
 				follower_id = user.user_id,
 			};
 			_context.Users_Follows.Add(follow);
@@ -195,7 +199,7 @@ namespace PostAPI.Controllers {
 
 		[HttpGet("GetFollowersByUser/{id}")]
 		public async Task<ActionResult> GetFollowersByUser(int id) {
-			return Ok(await _context.Users_Follows.Where(u => u.user_id == id).ToArrayAsync());
+			return Ok(await _context.Users_Follows.Where(u => u.user_id == id).Select(i => i.follower_id).ToArrayAsync());
 		}
 
 		[HttpGet("GetAllPostsByTags/{tag}")]
