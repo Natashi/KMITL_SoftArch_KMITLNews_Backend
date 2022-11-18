@@ -167,7 +167,7 @@ namespace PostAPI.Controllers {
 
 		[HttpGet("GetAllPostsSharedByUser/{id}")]
 		public async Task<ActionResult> GetAllPostsSharedByUser(int id) {
-			return Ok(await _context.Users_SharedPosts.Where(u => u.user_id == id).ToArrayAsync());
+			return Ok(await _context.Users_SharedPosts.Where(u => u.user_id == id).Select(i => i.shared_post_id).ToArrayAsync());
 		}
 
 		[HttpGet("GetAllTags")]
@@ -177,8 +177,24 @@ namespace PostAPI.Controllers {
 			return Ok(tags.ToArray());
 		}
 
-		[HttpGet("GetFollowingByUser/{id}")]
-		public async Task<ActionResult> GetFollowingByUser(int id) {
+		[HttpPut("FollowUser/{id}")]
+		public async Task<ActionResult> FollowUser(int id, Request_Post_FollowUser request) {
+			User? user = await _context.Users.FindAsync(id);
+			if (user == null)
+				return BadRequest("User not found.");
+
+			var follow = new Users_Follows {
+				user_id = request.UserToFollow,
+				follower_id = user.user_id,
+			};
+			_context.Users_Follows.Add(follow);
+
+			await _context.SaveChangesAsync();
+			return Ok("Success.");
+		}
+
+		[HttpGet("GetFollowersByUser/{id}")]
+		public async Task<ActionResult> GetFollowersByUser(int id) {
 			return Ok(await _context.Users_Follows.Where(u => u.user_id == id).ToArrayAsync());
 		}
 
@@ -191,6 +207,10 @@ namespace PostAPI.Controllers {
 		}
 	}
 
+	public class Request_Post_FollowUser {
+		[Required]
+		public int UserToFollow { get; set; }
+	}
 	public class Request_Post_Create {
 		[Required]
 		public string PostText { get; set; } = string.Empty;
