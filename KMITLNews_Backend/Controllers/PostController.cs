@@ -10,7 +10,7 @@ using Azure.Core;
 
 #pragma warning disable CS1998
 
-namespace PostAPI.Controllers {
+namespace KMITLNews_Backend.Controllers {
 	[Route("api/[controller]")] // ตรวจค่าว่าเอาคำที่อยู่หน้า Controller มาเป็นชื่อ Route
 	[ApiController]
 
@@ -22,7 +22,7 @@ namespace PostAPI.Controllers {
 
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Post>>> GetAllPost() {
-			return await _context.Posts.ToListAsync();
+			return Ok(await _context.Posts.ToListAsync());
 		}
 
 		private void AddTags(int postID, string[]? tags) {

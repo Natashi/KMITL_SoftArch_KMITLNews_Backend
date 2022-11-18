@@ -7,8 +7,7 @@ using KMITLNews_Backend.Models;
 using System.ComponentModel.DataAnnotations;
 using KMITLNews_Backend.Controllers;
 
-namespace UserAPI.Controllers
-{
+namespace KMITLNews_Backend.Controllers {
 	[Route("api/[controller]")] // ตรวจค่าว่าเอาคำที่อยู่หน้า Controller มาเป็นชื่อ Route
 	[ApiController]
 	

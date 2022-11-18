@@ -55,7 +55,7 @@ namespace KMITLNews_Backend.Controllers {
 			if (!CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
 
-			var res = await _context.Users.Select(i => i.verified == (int)UserVerificationStatus.Pending).ToListAsync();
+			var res = await _context.Users.Where(i => i.verified == (int)UserVerificationStatus.Pending).ToListAsync();
 			return Ok(res);
 		}
 

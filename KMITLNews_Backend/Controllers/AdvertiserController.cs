@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace KMITLNews_Backend.Controllers
-{
+namespace KMITLNews_Backend.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdvertisersController : ControllerBase
+	public class AdvertisersController : ControllerBase
     {
         private readonly DataContext _context;
 
@@ -15,7 +14,7 @@ namespace KMITLNews_Backend.Controllers
         }
 
         [HttpGet("GetAllAdvertiserData")]
-        public async Task<ActionResult<List<Advertiser>>> GetAllAdvertiserData()
+        public async Task<ActionResult<IEnumerable<Advertiser>>> GetAllAdvertiserData()
         {
             return Ok(await _context.Advertisers.ToListAsync());
         }
@@ -30,7 +29,7 @@ namespace KMITLNews_Backend.Controllers
         }
 
         [HttpPost("RegisterAdvertiser")]
-        public async Task<ActionResult<List<Advertiser>>> RegisterAdvertiser(Request_Advertiser_Create request)
+        public async Task<ActionResult<IEnumerable<Advertiser>>> RegisterAdvertiser(Request_Advertiser_Create request)
         {
             var ads = new Advertiser
             {
