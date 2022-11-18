@@ -37,6 +37,15 @@ namespace KMITLNews_Backend.Controllers {
 			if (!CheckAuthorization(request.RequesterUserID))
 				return Unauthorized("No authorization.");
 
+			var res = await _context.Posts.Where(i => i.report_count > 0).ToListAsync();
+			return Ok(res);
+		}
+
+		[HttpGet("GetAllReportedUsers")]
+		public async Task<ActionResult<IEnumerable<Post>>> GetAllReportedUsers([FromQuery] Request_Admin_Basic request) {
+			if (!CheckAuthorization(request.RequesterUserID))
+				return Unauthorized("No authorization.");
+
 			var res = await _context.Users.Where(i => i.report_count > 0).ToListAsync();
 			return Ok(res);
 		}

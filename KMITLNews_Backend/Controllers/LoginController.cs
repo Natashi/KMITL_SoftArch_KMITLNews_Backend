@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 
 using KMITLNews_Backend.Models;
 using System.ComponentModel.DataAnnotations;
+using KMITLNews_Backend.Controllers;
 
 namespace UserAPI.Controllers
 {
@@ -189,6 +190,18 @@ namespace UserAPI.Controllers
 				return BadRequest("User not found.");
 
 			++(user.report_count);
+
+			await _context.SaveChangesAsync();
+			return Ok("Success.");
+		}
+
+		[HttpPut("RequestVerification/{userID}")]
+		public async Task<ActionResult> RequestVerification(int userID) {
+			User? user = await _context.Users.FirstOrDefaultAsync(u => u.user_id == userID);
+			if (user == null)
+				return BadRequest("User not found.");
+
+			user.verified = (int)UserVerificationStatus.Pending;
 
 			await _context.SaveChangesAsync();
 			return Ok("Success.");
