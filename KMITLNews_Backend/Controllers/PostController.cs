@@ -48,6 +48,25 @@ namespace PostAPI.Controllers {
 			return Ok("Success.");
 		}
 
+		[HttpPut("AddTagsToPost/{postID}")]
+		public async Task<ActionResult> AddTagsToPost(int postID, Request_Post_AddTagsToPost request) {
+			Post? post = await _context.Posts.FindAsync(postID);
+			if (post == null)
+				return BadRequest("Post not found.");
+
+			if (request.Tags != null) {
+				foreach (string iTag in request.Tags) {
+					Tags_Posts tagsPosts = new Tags_Posts {
+						tag_name = iTag,
+						post_id = postID,
+					};
+					_context.Tags_Posts.Add(tagsPosts);
+				}
+			}
+
+			await _context.SaveChangesAsync();
+			return Ok("Success.");
+		}
 
 		[HttpPut("UpdatePost/{id}")]
 		public async Task<ActionResult> UpdatePost(int id, Request_Post_Update request) {
