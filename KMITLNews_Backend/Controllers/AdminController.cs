@@ -88,12 +88,12 @@ namespace KMITLNews_Backend.Controllers {
 
 		[HttpDelete("RemovePost/{id}")]
 		public async Task<ActionResult> RemovePost(int postID, Request_Admin_Basic request) {
-			if (!CheckAuthorization(request.RequesterUserID))
-				return Unauthorized("No authorization.");
-
 			Post? post = await _context.Posts.FindAsync(postID);
 			if (post == null)
 				return BadRequest(string.Format("Post not found with id={0}", postID));
+
+			if (postID != post.post_id && !CheckAuthorization(request.RequesterUserID))
+				return Unauthorized("No authorization.");
 
 			//Remove post from each tables
 			_context.Posts.Remove(post);
