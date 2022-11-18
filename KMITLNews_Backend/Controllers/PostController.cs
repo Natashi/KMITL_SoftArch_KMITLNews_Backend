@@ -4,6 +4,8 @@ using KMITLNews_Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Azure;
 using System.ComponentModel.DataAnnotations;
+using Azure.Core;
+
 
 
 #pragma warning disable CS1998
@@ -23,6 +25,18 @@ namespace PostAPI.Controllers {
 			return await _context.Posts.ToListAsync();
 		}
 
+		private void AddTags(int postID, string[]? tags) {
+			if (tags != null) {
+				foreach (string iTag in tags) {
+					Tags_Posts tagsPosts = new Tags_Posts {
+						tag_name = iTag,
+						post_id = postID,
+					};
+					_context.Tags_Posts.Add(tagsPosts);
+				}
+			}
+		}
+
 		[HttpPost("CreatePost/{user_id}")]
 		public async Task<ActionResult> CreatePost(int user_id, Request_Post_Create request) {
 			var post = new Post {
@@ -34,8 +48,6 @@ namespace PostAPI.Controllers {
 			};
 
 			var entityEntry = _context.Posts.Add(post);
-			await _context.SaveChangesAsync();
-
 			Post addedPost = entityEntry.Entity;
 
 			var P_User = new Posts_Users {
@@ -43,6 +55,8 @@ namespace PostAPI.Controllers {
 				post_id = addedPost.post_id,
 			};
 			_context.Posts_Users.Add(P_User);
+
+			AddTags(addedPost.post_id, request.Tags);
 
 			await _context.SaveChangesAsync();
 			return Ok("Success.");
@@ -54,15 +68,7 @@ namespace PostAPI.Controllers {
 			if (post == null)
 				return BadRequest("Post not found.");
 
-			if (request.Tags != null) {
-				foreach (string iTag in request.Tags) {
-					Tags_Posts tagsPosts = new Tags_Posts {
-						tag_name = iTag,
-						post_id = postID,
-					};
-					_context.Tags_Posts.Add(tagsPosts);
-				}
-			}
+			AddTags(postID, request.Tags);
 
 			await _context.SaveChangesAsync();
 			return Ok("Success.");
@@ -70,12 +76,12 @@ namespace PostAPI.Controllers {
 
 		[HttpPut("UpdatePost/{id}")]
 		public async Task<ActionResult> UpdatePost(int id, Request_Post_Update request) {
-			var Post_id = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == request.post_id);
+			var Post_id = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == request.PostID);
 			var User_id = await _context.Users.FirstOrDefaultAsync(u => u.user_id == id);
 			if (Post_id == null || User_id == null)
 				return BadRequest("Post not found.");
 
-			Post_id.post_text = request.post_text;
+			Post_id.post_text = request.PostText;
 			Post_id.post_date = DateTime.Now;
 
 			return Ok("Success.");
@@ -138,7 +144,7 @@ namespace PostAPI.Controllers {
 
 		[HttpPost("CreateShare/{id}")]
 		public async Task<ActionResult> CreateShare(int id, Request_Post_Share request) {
-			var post_check = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == request.post_id);
+			var post_check = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == request.PostID);
 			var user_check = await _context.Users.FirstOrDefaultAsync(u => u.user_id == id);
 			if (post_check == null || user_check == null)
 				return BadRequest("User or post not found.");
@@ -198,19 +204,19 @@ namespace PostAPI.Controllers {
 		public string PostText { get; set; } = string.Empty;
 		[Required]
 		public string AttachedImgUrl { get; set; } = string.Empty;
+		public string[]? Tags { get; set; }     //List of tags to add
 	}
 	public class Request_Post_Update {
 		[Required]
-		public int post_id { get; set; }
+		public int PostID { get; set; }
 
 		[Required(AllowEmptyStrings = false)]
-		public string post_text { get; set; } = string.Empty;
-		[Required]
-		public string attached_image_url { get; set; } = string.Empty;
+		public string PostText { get; set; } = string.Empty;
+		public string AttachedImageUrl { get; set; } = string.Empty;
 	}
 	public class Request_Post_Share {
 		[Required]
-		public int post_id { get; set; }
+		public int PostID { get; set; }
 	}
 	public class Request_Post_AddTagsToPost {
 		[Required]
