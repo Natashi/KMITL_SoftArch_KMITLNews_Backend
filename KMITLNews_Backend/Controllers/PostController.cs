@@ -90,8 +90,8 @@ namespace PostAPI.Controllers {
 			return Ok("Success.");
 		}
 
-		[HttpPut("UpdateReportCountToZero/{id}")]
-		public async Task<ActionResult> UpdateReportCountToZero(int id) {
+		[HttpPut("ResetReportCount/{id}")]
+		public async Task<ActionResult> ResetReportCount(int id) {
 			var Post_id = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == id);
 			if (Post_id == null)
 				return BadRequest("Post not found.");
@@ -102,8 +102,8 @@ namespace PostAPI.Controllers {
 			return Ok("Success.");
 		}
 
-		[HttpPut("UpdateReportCount/{id}")]
-		public async Task<ActionResult> UpdateReportCount(int id) {
+		[HttpPut("AddReportCount/{id}")]
+		public async Task<ActionResult> AddReportCount(int id) {
 			var Post_id = await _context.Posts.FirstOrDefaultAsync(u => u.post_id == id);
 			if (Post_id == null)
 				return BadRequest("Post not found.");

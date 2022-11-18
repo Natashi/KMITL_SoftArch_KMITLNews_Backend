@@ -169,6 +169,30 @@ namespace UserAPI.Controllers
 			await _context.SaveChangesAsync();  // รอให้ save การเปลี่ยนแปลงข้อมูลลง DB
 			return Ok("Success.");
 		}
+
+		[HttpPut("ResetReportCount/{id}")]
+		public async Task<ActionResult> ResetReportCount(int id) {
+			User? user = await _context.Users.FirstOrDefaultAsync(u => u.user_id == id);
+			if (user == null)
+				return BadRequest("Post not found.");
+
+			user.report_count = 0;
+
+			await _context.SaveChangesAsync();
+			return Ok("Success.");
+		}
+
+		[HttpPut("AddReportCount/{id}")]
+		public async Task<ActionResult> AddReportCount(int id) {
+			User? user = await _context.Users.FirstOrDefaultAsync(u => u.user_id == id);
+			if (user == null)
+				return BadRequest("Post not found.");
+
+			++(user.report_count);
+
+			await _context.SaveChangesAsync();
+			return Ok("Success.");
+		}
 	}
 
 	public class Request_User_Register {
