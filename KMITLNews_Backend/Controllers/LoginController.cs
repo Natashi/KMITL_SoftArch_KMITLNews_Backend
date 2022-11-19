@@ -63,6 +63,7 @@ namespace KMITLNews_Backend.Controllers {
 				mobile_no = request.mobile_no,
 				first_name = request.first_name,
 				last_name = request.last_name,
+				display_name = request.first_name + " " + request.last_name,
 				verificationToken = CreateRandomToken()
 			};
 
@@ -97,10 +98,16 @@ namespace KMITLNews_Backend.Controllers {
 
 			if (user == null) return BadRequest("User not found.");
 
-			if(!VerifypassHash(request.password,user.pass_hash,user.pass_salt))
+			if(!VerifypassHash(request.password, user.pass_hash, user.pass_salt))
 				return BadRequest("Incorrect password.");
 
-			return Ok($"{user.user_id}, {user.email}");
+			Post[] posts = await PostController.GetAllPostbyUserStatic(_context, user.user_id);
+
+			return Ok(new Dictionary<string, object>() {
+				["user_id"] = user.user_id,
+				["email"] = user.email,
+				["posts"] = posts,
+			});
 		}
 
 		// confirm password
@@ -132,7 +139,7 @@ namespace KMITLNews_Backend.Controllers {
 			user_find.display_name = request.display_name;
 
 			await _context.SaveChangesAsync();  // รอให้ save การเปลี่ยนแปลงข้อมูลลง DB
-			return Ok("Success.");
+			return Ok(user_find);
 		}
 
 		// ----------------------------------------- reset password
