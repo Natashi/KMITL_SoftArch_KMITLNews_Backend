@@ -101,13 +101,17 @@ namespace KMITLNews_Backend.Controllers {
 			if(!VerifypassHash(request.password, user.pass_hash, user.pass_salt))
 				return BadRequest("Incorrect password.");
 
+			/*
 			Post[] posts = await PostController.GetAllPostbyUserStatic(_context, user.user_id);
-
 			return Ok(new Dictionary<string, object>() {
 				["user_id"] = user.user_id,
 				["email"] = user.email,
 				["posts"] = posts,
 			});
+			*/
+
+			Post[] posts = await PostController.GetAllPostStatic(_context);
+			return Ok(posts);
 		}
 
 		// confirm password

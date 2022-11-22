@@ -20,6 +20,10 @@ namespace KMITLNews_Backend.Controllers {
 			_context = context;
 		}
 
+		public static async Task<Post[]> GetAllPostStatic(DataContext ctx) {
+			return await ctx.Posts.ToArrayAsync();
+		}
+
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Post>>> GetAllPost() {
 			return Ok(await _context.Posts.ToListAsync());
