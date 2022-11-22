@@ -25,6 +25,15 @@ namespace KMITLNews_Backend.Controllers {
 			return Ok(await _context.Posts.ToListAsync());
 		}
 
+		[HttpGet("GetPost/{postID}")]
+		public async Task<ActionResult<Post>> GetPost(int postID) {
+			Post? post = await _context.Posts.FindAsync(postID);
+			if (post == null)
+				return BadRequest("Post not found.");
+			
+			return Ok(post);
+		}
+
 		private void AddTags(int postID, string[]? tags) {
 			if (tags != null) {
 				foreach (string iTag in tags) {
@@ -181,31 +190,6 @@ namespace KMITLNews_Backend.Controllers {
 			return Ok(tags.ToArray());
 		}
 
-		[HttpPut("FollowUser/{id}")]
-		public async Task<ActionResult> FollowUser(int id, Request_Post_FollowUser request) {
-			User? user = await _context.Users.FindAsync(id);
-			if (user == null)
-				return BadRequest("User not found.");
-
-			User? userToFollow = await _context.Users.FindAsync(request.UserToFollow);
-			if (userToFollow == null)
-				return BadRequest("UserToFollow not found.");
-
-			var follow = new Users_Follows {
-				user_id = userToFollow.user_id,
-				follower_id = user.user_id,
-			};
-			_context.Users_Follows.Add(follow);
-
-			await _context.SaveChangesAsync();
-			return Ok("Success.");
-		}
-
-		[HttpGet("GetFollowersByUser/{id}")]
-		public async Task<ActionResult> GetFollowersByUser(int id) {
-			return Ok(await _context.Users_Follows.Where(u => u.user_id == id).Select(i => i.follower_id).ToArrayAsync());
-		}
-
 		[HttpGet("GetAllPostsByTags/{tag}")]
 		public async Task<ActionResult> GetAllPostsByTag(string tag) {
 			int[] postIDs = await _context.Tags_Posts.Where(i => i.tag_name == tag).Select(i => i.post_id).ToArrayAsync();
@@ -215,10 +199,6 @@ namespace KMITLNews_Backend.Controllers {
 		}
 	}
 
-	public class Request_Post_FollowUser {
-		[Required]
-		public int UserToFollow { get; set; }
-	}
 	public class Request_Post_Create {
 		[Required]
 		public string PostText { get; set; } = string.Empty;

@@ -212,6 +212,106 @@ namespace KMITLNews_Backend.Controllers {
 			await _context.SaveChangesAsync();
 			return Ok("Success.");
 		}
+
+		[HttpPut("FollowUser/{id}")]
+		public async Task<ActionResult> FollowUser(int id, Request_User_FollowUser request) {
+			User? user = await _context.Users.FindAsync(id);
+			if (user == null)
+				return BadRequest("User not found.");
+
+			User? userToFollow = await _context.Users.FindAsync(request.UserToFollow);
+			if (userToFollow == null)
+				return BadRequest("UserToFollow not found.");
+
+			var follow = new Users_Follows {
+				user_id = userToFollow.user_id,
+				follower_id = user.user_id,
+			};
+			_context.Users_Follows.Add(follow);
+
+			await _context.SaveChangesAsync();
+			return Ok("Success.");
+		}
+		[HttpDelete("UnFollowUser/{id}")]
+		public async Task<ActionResult> UnFollowUser(int id, Request_User_FollowUser request) {
+			User? user = await _context.Users.FindAsync(id);
+			if (user == null)
+				return BadRequest("User not found.");
+
+			User? userToUnfollow = await _context.Users.FindAsync(request.UserToFollow);
+			if (userToUnfollow == null)
+				return BadRequest("UserToUnfollow not found.");
+
+			_context.Users_Follows.Remove(new Users_Follows {
+				user_id = userToUnfollow.user_id,
+				follower_id = user.user_id,
+			});
+
+			await _context.SaveChangesAsync();
+			return Ok("Success.");
+		}
+
+		[HttpPut("FollowTag/{tag}")]
+		public async Task<ActionResult> FollowTag(int id, Request_User_FollowTag request) {
+			User? user = await _context.Users.FindAsync(id);
+			if (user == null)
+				return BadRequest("User not found.");
+
+			var follow = new Tags_Follows {
+				tag_name = request.tag,
+				follower_id = user.user_id,
+			};
+			_context.Tags_Follows.Add(follow);
+
+			await _context.SaveChangesAsync();
+			return Ok("Success.");
+		}
+		[HttpDelete("UnFollowTag/{tag}")]
+		public async Task<ActionResult> UnFollowTag(int id, Request_User_FollowTag request) {
+			User? user = await _context.Users.FindAsync(id);
+			if (user == null)
+				return BadRequest("User not found.");
+
+			_context.Tags_Follows.Remove(new Tags_Follows {
+				tag_name = request.tag,
+				follower_id = user.user_id,
+			});
+
+			await _context.SaveChangesAsync();
+			return Ok("Success.");
+		}
+
+		//Get all the users following this user
+		[HttpGet("GetFollowersByUser/{id}")]
+		public async Task<ActionResult> GetFollowersByUser(int id) {
+			return Ok(await _context.Users_Follows.Where(u => u.user_id == id)
+				.Select(i => i.follower_id).ToArrayAsync());
+		}
+
+		//Gets all the users followed by this user
+		[HttpGet("GetFollowingUsers/{userID}")]
+		public async Task<ActionResult> GetFollowingUsers(int userID) {
+			var user = await _context.Users.FirstOrDefaultAsync(x => x.user_id == userID);
+			if (user == null)
+				return BadRequest("User not found.");
+
+			var following = await _context.Users_Follows.Where(x => x.follower_id == userID)
+				.Select(x => x.user_id).ToListAsync();
+
+			return Ok(following);
+		}
+
+		[HttpGet("GetFollowingTags/{userID}")]
+		public async Task<ActionResult<User>> GetFollowingTags(int userID) {
+			var user = await _context.Users.FirstOrDefaultAsync(x => x.user_id == userID);
+			if (user == null)
+				return BadRequest("User not found.");
+
+			var following = await _context.Tags_Follows.Where(x => x.follower_id == userID)
+				.Select(x => x.tag_name).ToListAsync();
+
+			return Ok(following);
+		}
 	}
 
 	public class Request_User_Register {
@@ -245,5 +345,13 @@ namespace KMITLNews_Backend.Controllers {
 		//public string verificationToken { get; set; } = string.Empty;
 		public string password { get; set; } = string.Empty;
 
+	}
+	public class Request_User_FollowUser {
+		[Required]
+		public int UserToFollow { get; set; }
+	}
+	public class Request_User_FollowTag {
+		[Required]
+		public string tag { get; set; } = string.Empty;
 	}
 }
