@@ -26,7 +26,7 @@ namespace KMITLNews_Backend.Controllers {
 
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Post>>> GetAllPost() {
-			return Ok(await _context.Posts.ToListAsync());
+			return Ok(GetAllPostStatic(_context));
 		}
 
 		[HttpGet("GetPost/{postID}")]
@@ -152,15 +152,10 @@ namespace KMITLNews_Backend.Controllers {
 			return Ok(await _context.Posts.Where(u => u.verified == true).ToListAsync());
 		}
 
-		public static async Task<Post[]> GetAllPostbyUserStatic(DataContext ctx, int userID) {
-			int[] postIDs = await ctx.Posts_Users.Where(i => i.user_id == userID).Select(i => i.post_id).ToArrayAsync();
-			Post[] posts = await ctx.Posts.Where(i => postIDs.Contains(i.post_id)).ToArrayAsync();
-			return posts;
-		}
-
 		[HttpGet("GetAllPostbyUser/{userID}")]
 		public async Task<ActionResult> GetAllPostbyUser(int userID) {
-			Post[] posts = await GetAllPostbyUserStatic(_context, userID);
+			int[] postIDs = await _context.Posts_Users.Where(i => i.user_id == userID).Select(i => i.post_id).ToArrayAsync();
+			Post[] posts = await _context.Posts.Where(i => postIDs.Contains(i.post_id)).ToArrayAsync();
 			return Ok(posts);
 		}
 
