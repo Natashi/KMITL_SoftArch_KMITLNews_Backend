@@ -111,7 +111,10 @@ namespace KMITLNews_Backend.Controllers {
 			*/
 
 			Post[] posts = await PostController.GetAllPostStatic(_context);
-			return Ok(posts);
+			return Ok(new Dictionary<string, object>() {
+				["user"] = user,
+				["posts"] = posts,
+			});
 		}
 
 		// confirm password

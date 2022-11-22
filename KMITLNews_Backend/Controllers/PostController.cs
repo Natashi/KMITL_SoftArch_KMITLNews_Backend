@@ -38,6 +38,19 @@ namespace KMITLNews_Backend.Controllers {
 			return Ok(post);
 		}
 
+		[HttpGet("GetPostOwner/{postID}")]
+		public async Task<ActionResult<Post>> GetPostOwner(int postID) {
+			Post? post = await _context.Posts.FindAsync(postID);
+			if (post == null)
+				return BadRequest("Post not found.");
+
+			var postUser = await _context.Posts_Users.FirstOrDefaultAsync(u => u.post_id == postID);
+			if (postUser == null)
+				return BadRequest();
+
+			return Ok(postUser.user_id);
+		}
+
 		private void AddTags(int postID, string[]? tags) {
 			if (tags != null) {
 				foreach (string iTag in tags) {
